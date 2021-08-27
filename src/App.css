@@ -13,7 +13,7 @@ html {
 .App {
   background: #ffffff;
   border-radius: 3px;
-  margin: 12px 0 0 12px;
+  margin: 12px auto 12px;
   max-width: 350px;
 }
 
@@ -88,4 +88,8 @@ button {
   top: 15px;
   right: 20px;
   cursor: pointer;
+}
+
+.checked {
+  background: yellow;
 }

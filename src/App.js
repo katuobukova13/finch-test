@@ -9,7 +9,7 @@ const FIRST = [
 
 const SECOND = [1, 2];
 
-function App() {
+const App = () => {
   let [firstNumbers, setFirstNumbers] = useState([]);
   let [secondNumber, setSecondNumber] = useState(null);
   let [firstFillNumbers, setFirstFillNumbers] = useState("Отметьте 8 чисел.");
@@ -17,16 +17,19 @@ function App() {
   let [ticketWon, setTicketWon] = useState("Проиграли :(");
   let [result, changeResult] = useState(true);
 
+  //создание рефов для каждого элемента первого поля
   const firstID = useRef([]).current;
   const saveFirstRef = (i) => (elem) => {
     firstID[i] = elem;
   };
 
+  //создание рефов для каждого элемента второго поля
   const secondID = useRef([]).current;
   const saveSecondRef = (i) => (elem) => {
     secondID[i] = elem;
   };
 
+  //удаление элементов первого поля
   const removeFirstNumber = (number) => {
     let copy = [...firstNumbers];
     for (let i = copy.length - 1; i >= 0; i--) {
@@ -38,36 +41,41 @@ function App() {
     setFirstFillNumbers(`Отмечено ${copy.length} из 8.`);
   };
 
+  //отметить 8 цифр в первом поле
   const addFirstNumbers = (e) => {
     if (firstNumbers.includes(+e.target.id)) {
-      e.target.style.background = "white";
+      e.target.className = "field__item";
       removeFirstNumber(+e.target.id);
     } else {
-      if (firstNumbers.length < 8) {
-        e.target.style.background = "yellow";
+      if (firstNumbers.length < 8 && e.target.id) {
+        e.target.className = "field__item checked";
         setFirstNumbers([...firstNumbers, +e.target.id]);
         setFirstFillNumbers(`Отмечено ${firstNumbers.length + 1} из 8.`);
-        console.log(firstNumbers);
       }
     }
   };
 
+  //удалить цифру из 2 поля
   const removeNumberTwo = () => {
     setSecondNumber(null);
     setSecondFillNumber("Отметьте 1 число.");
   };
 
+  //добавить одну цифру в 2 поле
   const addSecondNumber = (e) => {
-    if (secondNumber === null) {
-      e.target.style.background = "yellow";
-      setSecondNumber(+e.target.id);
-      setSecondFillNumber("Число отмечено.");
+    if (secondNumber === +e.target.id) {
+      e.target.className = "field__item";
+      removeNumberTwo(+e.target.id);
     } else {
-      e.target.style.background = "white";
-      removeNumberTwo();
+      if (secondNumber === null) {
+        e.target.className = "field__item checked";
+        setSecondNumber(+e.target.id);
+        setSecondFillNumber("Число отмечено.");
+      }
     }
   };
 
+  //сгенерировать массив выйгрыша
   const generateArrays = (min, max) => {
     let arrBig = [];
     let arrSmall = null;
@@ -82,21 +90,21 @@ function App() {
     let randomSmall = 1 + Math.random() * 2;
     arrSmall = Math.floor(randomSmall);
 
-    console.log(arrBig, arrSmall);
-
     return [arrBig, arrSmall];
   };
 
+  //отметить числа для выбора волшебной палочкой
   const checkedNumbers = (magicBig, magicSmall) => {
     for (let i = 0; i < magicBig.length; i++) {
-      firstID[magicBig[i]].style.background = "yellow";
+      firstID[magicBig[i]].className = "field__item checked";
     }
-    secondID[magicSmall].style.background = "yellow";
+    secondID[magicSmall].className = "field__item checked";
   };
 
+  //генерация пользовательского массива чисел волшебной палочкой
   const generateMagicWand = (min, max) => {
     let magicBig = [...firstNumbers];
-    let magicSmall = null;
+    let magicSmall = secondNumber;
 
     for (let i = 0; magicBig.length < 8; i++) {
       let randomBig = Math.floor(min + Math.random() * (max + 1 - min));
@@ -116,16 +124,12 @@ function App() {
     setSecondFillNumber("Число отмечено.");
   };
 
+  //результат выйгрыша/пройгрыша
   const showResult = () => {
     let random = generateArrays(1, 19);
 
-    console.log(`random: ${random}`);
-    console.log(`1 & 2: ${firstNumbers}, ${secondNumber}`);
-
     let checkFirst = firstNumbers.filter((el) => random[0].includes(el));
     let checkSecond = secondNumber === random[1];
-
-    console.log(checkFirst, checkFirst.length, checkSecond);
 
     if (
       checkFirst.length >= 4 ||
@@ -151,14 +155,13 @@ function App() {
               Поле 1 <span className="fill-big">{firstFillNumbers}</span>
             </span>
 
-            <div className="field">
+            <div className="field" onClick={addFirstNumbers}>
               {FIRST.map((elem, key) => (
                 <div
                   className="field__item"
                   key={elem}
                   id={elem}
                   ref={saveFirstRef(elem)}
-                  onClick={addFirstNumbers}
                 >
                   {elem}
                 </div>
@@ -167,14 +170,13 @@ function App() {
             <span>
               Поле 2 <span className="fill-small">{secondFillNumber}</span>
             </span>
-            <div className="field">
+            <div className="field" onClick={addSecondNumber}>
               {SECOND.map((elem, key) => (
                 <div
                   className="field__item"
                   key={elem}
                   id={elem}
                   ref={saveSecondRef(elem)}
-                  onClick={addSecondNumber}
                 >
                   {elem}
                 </div>
@@ -188,6 +190,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
