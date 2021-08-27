@@ -1,38 +1,91 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #4568dc 0%, #b06ab3 100%) center no-repeat;
+  height: 100vh;
+}
+
+html {
+  font-family: "Roboto", sans-serif;
+}
+
 .App {
-  text-align: center;
+  background: #ffffff;
+  border-radius: 3px;
+  margin: 12px 0 0 12px;
+  max-width: 350px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.container {
+  position: relative;
+  padding: 14px 11px 24px 11px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.field {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  max-width: 300px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
-.App-link {
-  color: #61dafb;
+.field__item {
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ticket {
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 5px;
+}
+
+span {
+  display: inline-block;
+  margin-top: 12px;
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+span > span {
+  margin-top: 0;
+  margin-left: 8px;
+  font-weight: 300;
+}
+
+button {
+  display: flex;
+  padding: 13px 21px 13px 26px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 40px;
+  font-size: 14px;
+  text-align: center;
+  color: #000000;
+  opacity: 0.64;
+  cursor: pointer;
+  margin: 23px auto 0;
+}
+
+.result {
+  display: inline-block;
+  margin-top: 12px;
+  margin-left: 5px;
+  font-size: 14px;
+  font-weight: 300;
+  height: 289px;
+}
+
+.wand {
+  position: absolute;
+  display: inline-block;
+  top: 15px;
+  right: 20px;
+  cursor: pointer;
 }
