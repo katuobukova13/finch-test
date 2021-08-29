@@ -16,6 +16,7 @@ const App = () => {
   let [secondFillNumber, setSecondFillNumber] = useState("Отметьте 1 число.");
   let [ticketWon, setTicketWon] = useState("Проиграли :(");
   let [result, changeResult] = useState(true);
+  let [error, showError] = useState(false);
 
   //создание рефов для каждого элемента первого поля
   const firstID = useRef([]).current;
@@ -56,7 +57,7 @@ const App = () => {
   };
 
   //удалить цифру из 2 поля
-  const removeNumberTwo = () => {
+  const removeSecondNumber = () => {
     setSecondNumber(null);
     setSecondFillNumber("Отметьте 1 число.");
   };
@@ -65,9 +66,9 @@ const App = () => {
   const addSecondNumber = (e) => {
     if (secondNumber === +e.target.id) {
       e.target.className = "field__item";
-      removeNumberTwo(+e.target.id);
+      removeSecondNumber(+e.target.id);
     } else {
-      if (secondNumber === null) {
+      if (secondNumber === null && e.target.id) {
         e.target.className = "field__item checked";
         setSecondNumber(+e.target.id);
         setSecondFillNumber("Число отмечено.");
@@ -94,10 +95,13 @@ const App = () => {
   };
 
   //отметить числа для выбора волшебной палочкой
-  const checkedNumbers = (magicBig, magicSmall) => {
+  const checkedNumbersBig = (magicBig) => {
     for (let i = 0; i < magicBig.length; i++) {
       firstID[magicBig[i]].className = "field__item checked";
     }
+  };
+
+  const checkedNumbersSmall = (magicSmall) => {
     secondID[magicSmall].className = "field__item checked";
   };
 
@@ -112,33 +116,41 @@ const App = () => {
         magicBig.push(randomBig);
       }
       setFirstNumbers(magicBig);
+      checkedNumbersBig(magicBig);
+      setFirstFillNumbers("Отмечено 8 из 8.");
     }
 
     let randomSmall = 1 + Math.random() * 2;
     magicSmall = Math.floor(randomSmall);
     setSecondNumber(magicSmall);
 
-    checkedNumbers(magicBig, magicSmall);
+    if (secondNumber === null) {
+      checkedNumbersSmall(magicSmall);
+    }
 
-    setFirstFillNumbers("Отмечено 8 из 8.");
     setSecondFillNumber("Число отмечено.");
   };
 
   //результат выйгрыша/пройгрыша
   const showResult = () => {
-    let random = generateArrays(1, 19);
+    if (firstNumbers.length === 8 && secondNumber) {
+      let random = generateArrays(1, 19);
 
-    let checkFirst = firstNumbers.filter((el) => random[0].includes(el));
-    let checkSecond = secondNumber === random[1];
+      let checkFirst = firstNumbers.filter((el) => random[0].includes(el));
+      let checkSecond = secondNumber === random[1];
 
-    if (
-      checkFirst.length >= 4 ||
-      (checkFirst.length >= 3 && checkSecond === true)
-    ) {
-      setTicketWon("Ого, вы выиграли! Поздравляем!");
+      if (
+        checkFirst.length >= 4 ||
+        (checkFirst.length >= 3 && checkSecond === true)
+      ) {
+        setTicketWon("Ого, вы выиграли! Поздравляем!");
+      }
+
+      changeResult(false);
+      showError(false);
+    } else {
+      showError(true);
     }
-
-    changeResult(false);
   };
 
   return (
@@ -152,7 +164,10 @@ const App = () => {
             </div>
 
             <span>
-              Поле 1 <span className="fill-big">{firstFillNumbers}</span>
+              Поле 1{" "}
+              <span className={`fill-big ${error ? "err" : ""}`}>
+                {firstFillNumbers}
+              </span>
             </span>
 
             <div className="field" onClick={addFirstNumbers}>
@@ -168,7 +183,10 @@ const App = () => {
               ))}
             </div>
             <span>
-              Поле 2 <span className="fill-small">{secondFillNumber}</span>
+              Поле 2{" "}
+              <span className={`fill-small ${error ? "err" : ""}`}>
+                {secondFillNumber}
+              </span>
             </span>
             <div className="field" onClick={addSecondNumber}>
               {SECOND.map((elem, key) => (
