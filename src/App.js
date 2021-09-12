@@ -1,78 +1,56 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import wand from "./icons/magic-wand.png";
 
 import "./App.css";
 
-const FIRST = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-];
-
-const SECOND = [1, 2];
-
 const App = () => {
-  let [firstNumbers, setFirstNumbers] = useState([]);
-  let [secondNumber, setSecondNumber] = useState(null);
-  let [firstFillNumbers, setFirstFillNumbers] = useState("Отметьте 8 чисел.");
-  let [secondFillNumber, setSecondFillNumber] = useState("Отметьте 1 число.");
-  let [ticketWon, setTicketWon] = useState("Проиграли :(");
-  let [result, changeResult] = useState(true);
-  let [error, showError] = useState(false);
+  const [firstNumbers, setFirstNumbers] = useState([]);
+  const [secondNumber, setSecondNumber] = useState(null);
+  const [ticketWon, setTicketWon] = useState("Проиграли :(");
+  const [result, changeResult] = useState(true);
+  const [error, showError] = useState(false);
 
-  //создание рефов для каждого элемента первого поля
-  const firstID = useRef([]).current;
-  const saveFirstRef = (i) => (elem) => {
-    firstID[i] = elem;
+  const getTextForCheckedNumbsersFirst = () => {
+    return `Отмечено ${firstNumbers.length} чисел из 8`;
   };
 
-  //создание рефов для каждого элемента второго поля
-  const secondID = useRef([]).current;
-  const saveSecondRef = (i) => (elem) => {
-    secondID[i] = elem;
+  const getTextForCheckedNumbserSecond = () => {
+    if (secondNumber === null) {
+      return `Отмeтьте 1 число.`;
+    } else return `Отмeчено число.`;
   };
 
   //удаление элементов первого поля
   const removeFirstNumber = (number) => {
-    let copy = [...firstNumbers];
-    for (let i = copy.length - 1; i >= 0; i--) {
-      if (copy[i] === number) {
-        copy.splice(i, 1);
-      }
-    }
-    setFirstNumbers(copy);
-    setFirstFillNumbers(`Отмечено ${copy.length} из 8.`);
+    setFirstNumbers(
+      firstNumbers.filter((arrayNumber) => arrayNumber !== number)
+    );
+    getTextForCheckedNumbsersFirst(firstNumbers);
   };
 
   //отметить 8 цифр в первом поле
-  const addFirstNumbers = (e) => {
-    if (firstNumbers.includes(+e.target.id)) {
-      e.target.className = "field__item";
-      removeFirstNumber(+e.target.id);
+  const addFirstNumbers = (number) => {
+    if (firstNumbers.length < 8 && !firstNumbers.includes(number)) {
+      setFirstNumbers([...firstNumbers, number]);
+      getTextForCheckedNumbsersFirst(firstNumbers);
     } else {
-      if (firstNumbers.length < 8 && e.target.id) {
-        e.target.className = "field__item checked";
-        setFirstNumbers([...firstNumbers, +e.target.id]);
-        setFirstFillNumbers(`Отмечено ${firstNumbers.length + 1} из 8.`);
-      }
+      removeFirstNumber(number);
     }
   };
 
   //удалить цифру из 2 поля
   const removeSecondNumber = () => {
     setSecondNumber(null);
-    setSecondFillNumber("Отметьте 1 число.");
+    getTextForCheckedNumbserSecond(null);
   };
 
   //добавить одну цифру в 2 поле
-  const addSecondNumber = (e) => {
-    if (secondNumber === +e.target.id) {
-      e.target.className = "field__item";
-      removeSecondNumber(+e.target.id);
+  const addSecondNumber = (number) => {
+    if (secondNumber === null) {
+      setSecondNumber(number);
+      getTextForCheckedNumbserSecond(secondNumber);
     } else {
-      if (secondNumber === null && e.target.id) {
-        e.target.className = "field__item checked";
-        setSecondNumber(+e.target.id);
-        setSecondFillNumber("Число отмечено.");
-      }
+      removeSecondNumber(number);
     }
   };
 
@@ -94,21 +72,12 @@ const App = () => {
     return [arrBig, arrSmall];
   };
 
-  //отметить числа для выбора волшебной палочкой
-  const checkedNumbersBig = (magicBig) => {
-    for (let i = 0; i < magicBig.length; i++) {
-      firstID[magicBig[i]].className = "field__item checked";
-    }
-  };
-
-  const checkedNumbersSmall = (magicSmall) => {
-    secondID[magicSmall].className = "field__item checked";
-  };
-
   //генерация пользовательского массива чисел волшебной палочкой
-  const generateMagicWand = (min, max) => {
+  const generateMagicWand = () => {
     let magicBig = [...firstNumbers];
     let magicSmall = secondNumber;
+    const min = 1;
+    const max = 19;
 
     for (let i = 0; magicBig.length < 8; i++) {
       let randomBig = Math.floor(min + Math.random() * (max + 1 - min));
@@ -116,19 +85,14 @@ const App = () => {
         magicBig.push(randomBig);
       }
       setFirstNumbers(magicBig);
-      checkedNumbersBig(magicBig);
-      setFirstFillNumbers("Отмечено 8 из 8.");
+      getTextForCheckedNumbsersFirst(firstNumbers);
     }
 
     let randomSmall = 1 + Math.random() * 2;
     magicSmall = Math.floor(randomSmall);
     setSecondNumber(magicSmall);
 
-    if (secondNumber === null) {
-      checkedNumbersSmall(magicSmall);
-    }
-
-    setSecondFillNumber("Число отмечено.");
+    getTextForCheckedNumbserSecond(secondNumber);
   };
 
   //результат выйгрыша/пройгрыша
@@ -143,9 +107,8 @@ const App = () => {
         checkFirst.length >= 4 ||
         (checkFirst.length >= 3 && checkSecond === true)
       ) {
-        setTicketWon("Ого, вы выиграли! Поздравляем!");
+        setTicketWon("ОГО, выйграли!");
       }
-
       changeResult(false);
       showError(false);
     } else {
@@ -159,48 +122,52 @@ const App = () => {
         <div className="ticket">Билет 1</div>
         {result ? (
           <>
-            <div className="wand" onClick={() => generateMagicWand(1, 19)}>
+            <div className="wand" onClick={generateMagicWand}>
               <img src={wand} alt="wand" />
             </div>
 
-            <span>
-              Поле 1{" "}
+            <span className="fill">
+              Поле 1
               <span className={`fill-big ${error ? "err" : ""}`}>
-                {firstFillNumbers}
+                {getTextForCheckedNumbsersFirst()}
               </span>
             </span>
 
-            <div className="field" onClick={addFirstNumbers}>
-              {FIRST.map((elem, key) => (
-                <div
-                  className="field__item"
-                  key={elem}
-                  id={elem}
-                  ref={saveFirstRef(elem)}
+            <div className="field">
+              {[...Array(19)].map((elem, key) => (
+                <button
+                  key={key}
+                  className={`field__item ${
+                    firstNumbers.includes(key + 1) ? "field__item--checked" : ""
+                  }`}
+                  onClick={() => addFirstNumbers(key + 1)}
                 >
-                  {elem}
-                </div>
+                  {key + 1}
+                </button>
               ))}
             </div>
-            <span>
-              Поле 2{" "}
+            <span className="fill">
+              Поле 2
               <span className={`fill-small ${error ? "err" : ""}`}>
-                {secondFillNumber}
+                {getTextForCheckedNumbserSecond()}
               </span>
             </span>
-            <div className="field" onClick={addSecondNumber}>
-              {SECOND.map((elem, key) => (
-                <div
-                  className="field__item"
-                  key={elem}
-                  id={elem}
-                  ref={saveSecondRef(elem)}
+            <div className="field">
+              {[...Array(2)].map((elem, key) => (
+                <button
+                  className={`field__item ${
+                    secondNumber === key + 1 ? "field__item--checked" : ""
+                  }`}
+                  onClick={() => addSecondNumber(key + 1)}
+                  key={key}
                 >
-                  {elem}
-                </div>
+                  {key + 1}
+                </button>
               ))}
             </div>
-            <button onClick={showResult}>Показать результат</button>
+            <button className="button" onClick={showResult}>
+              Показать результат
+            </button>
           </>
         ) : (
           <div className="result">{ticketWon}</div>

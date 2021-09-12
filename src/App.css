@@ -12,15 +12,15 @@ html {
 }
 
 .App {
-  background: #ffffff;
+  background-color: #fff;
   border-radius: 3px;
-  margin: 12px auto 12px;
+  margin: 12px auto;
   max-width: 300px;
 }
 
 .container {
   position: relative;
-  padding: 14px 11px 24px 11px;
+  padding: 14px 11px 24px;
 }
 
 .field {
@@ -31,7 +31,8 @@ html {
 }
 
 .field__item {
-  border: 1px solid #dddddd;
+  border: 1px solid #ddd;
+  background-color: #fff;
   box-sizing: border-box;
   border-radius: 5px;
   width: 40px;
@@ -47,7 +48,7 @@ html {
   margin-left: 5px;
 }
 
-span {
+.fill {
   display: inline-block;
   margin-top: 12px;
   margin-left: 5px;
@@ -55,13 +56,14 @@ span {
   font-weight: 400;
 }
 
-span > span {
+.fill-small,
+.fill-big {
   margin-top: 0;
   margin-left: 8px;
   font-weight: 300;
 }
 
-button {
+.button {
   display: flex;
   padding: 13px 21px 13px 26px;
   border: 1px solid rgba(0, 0, 0, 0.16);
@@ -91,7 +93,7 @@ button {
   cursor: pointer;
 }
 
-.checked {
+.field__item--checked {
   background: yellow;
 }
 
