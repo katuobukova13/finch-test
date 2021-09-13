@@ -10,10 +10,12 @@ const App = () => {
   const [result, changeResult] = useState(true);
   const [error, showError] = useState(false);
 
+  //изменение текста для количества отмеченных цифр 1 поля
   const getTextForCheckedNumbsersFirst = () => {
     return `Отмечено ${firstNumbers.length} чисел из 8`;
   };
 
+  //изменение текста для отмеченной цифры 2 поля
   const getTextForCheckedNumbserSecond = () => {
     if (secondNumber === null) {
       return `Отмeтьте 1 число.`;
